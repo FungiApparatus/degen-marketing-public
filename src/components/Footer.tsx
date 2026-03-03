@@ -1,0 +1,79 @@
+"use client";
+
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {usePathname, useRouter} from "next/navigation";
+import type {JSX} from "react";
+
+export interface FooterProps {
+    className?: string;
+}
+
+export default function Footer({className}: FooterProps): JSX.Element {
+    const router = useRouter();
+    const pathname = usePathname();
+
+    const handleLogoClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+
+        if (pathname === "/") {
+            window.scrollTo({top: 0, left: 0, behavior: "smooth"});
+            return;
+        }
+
+        router.push("/");
+    };
+
+    return (
+        <div
+            className={`relative mt-[300px] mb-[20px] w-full px-10 box-border h-[200px] shrink-0 text-base ${className || ""}`}>
+            <div className="absolute bottom-[0px] left-10 leading-[140%]">
+                © 2025 Studio Degen Labs, LLC. All rights reserved.
+            </div>
+            <div className="absolute bottom-[0px] right-10 flex gap-[30px] leading-[140%]">
+                <div className="cursor-pointer">Terms of Use</div>
+                <div className="cursor-pointer">Privacy</div>
+            </div>
+
+            <div className="absolute bottom-[81.9px] left-10 w-[143.3px] h-[25.1px]">
+                <Image
+                    className="absolute bottom-[0px] left-[0px] w-[25.1px] h-[25.1px]"
+                    width={25.1}
+                    height={25.1}
+                    sizes="100vw"
+                    alt="Social 1"
+                    src="/Footer/Socials.svg"
+                />
+                <Image
+                    className="absolute bottom-[0.1px] left-[122.29px] w-[21px] h-[25px]"
+                    width={21}
+                    height={25}
+                    sizes="100vw"
+                    alt="Social 2"
+                    src="/Footer/TikTok.svg"
+                />
+                <Link
+                    href="https://www.instagram.com/milinhchi/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <Image
+                        className="absolute bottom-[0px] left-[61.14px] w-[25.1px] h-[25.1px] cursor-pointer"
+                        width={25.1}
+                        height={25.1}
+                        sizes="100vw"
+                        alt="Social 3"
+                        src="/Footer/icon.svg"
+                    />
+                </Link>
+            </div>
+
+            <Link href="/" onClick={handleLogoClick}>
+                <div className="absolute bottom-[147px] left-10 w-[57.5px] h-[53px] cursor-pointer">
+                    <Image src="/Footer/Group.svg" width={57.5} height={53} alt="Footer Logo"/>
+                </div>
+            </Link>
+        </div>
+    );
+}
