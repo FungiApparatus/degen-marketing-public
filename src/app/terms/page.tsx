@@ -9,21 +9,21 @@ export default function TermsOfUsePage() {
             className="w-full bg-gray-200 bg-grid min-h-screen overflow-x-hidden text-left text-[20px] text-white font-brisbane flex flex-col items-center">
             <Header/>
 
-            <div className="relative w-[1728px] h-[2453px] shrink-0">
+            <div className="w-full max-w-[1728px] mx-auto px-[clamp(24px,9.43vw,163px)] pt-[clamp(80px,11.57vw,200px)] pb-16">
                 {/* Title */}
                 <div
-                    className="absolute top-[200px] left-[140px] text-[80px] leading-[140%] font-tomboy-lp-bold text-darkorange">
+                    className="text-[clamp(36px,4.63vw,80px)] leading-[140%] font-tomboy-lp-bold text-darkorange">
                     Terms of Use
                 </div>
 
                 {/* Effective Date */}
-                <div className="absolute top-[345px] left-[163px] text-[28px] leading-[140%]">
+                <div className="text-[clamp(18px,1.62vw,28px)] leading-[140%] mt-6">
                     <span>Effective: 02 March 2026. </span>
                     <span className="italic">Last revised: 02 March 2026.</span>
                 </div>
 
                 {/* Body Content */}
-                <div className="absolute top-[427px] left-[163px] text-[28px] leading-[140%] w-[1409px]">
+                <div className="text-[clamp(18px,1.62vw,28px)] leading-[140%] w-full md:w-[1409px] mt-6">
                     <p className="mb-0">
                         You may use the Degen site for lawful purposes only. You agree not to:
                     </p>
@@ -45,7 +45,7 @@ export default function TermsOfUsePage() {
 
                 {/* Bottom Acknowledgment */}
                 <div
-                    className="absolute top-[2342px] left-1/2 -translate-x-1/2 text-[30px] leading-[140%] font-tomboy-lp-bold text-center w-[1225px]">
+                    className="text-[clamp(18px,1.74vw,30px)] leading-[140%] font-tomboy-lp-bold text-center w-full md:w-[1225px] mx-auto mt-16">
                     By using the Degen platform and participating in events, you acknowledge that you have read,
                     understood, and agree to be bound by these Terms &amp; Conditions.
                 </div>

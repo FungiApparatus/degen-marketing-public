@@ -21,7 +21,7 @@ export default function Header() {
     };
 
     return (
-        <div className="fixed top-0 bg-gray-200 w-full flex items-center  px-10 box-border gap-[30px] shrink-0 z-50">
+        <div className="fixed top-0 bg-gray-200 w-full flex items-center px-[clamp(16px,2.31vw,40px)] box-border gap-[clamp(16px,1.74vw,30px)] shrink-0 z-50">
             <Link href="/" onClick={handleLogoClick}>
                 <div className="h-[26.3px] w-[98.6px] relative cursor-pointer">
                     <Image
@@ -35,7 +35,7 @@ export default function Header() {
             </Link>
 
             <Link href="/about">
-                <div className="w-[106px] flex items-center justify-center py-2 px-4 box-border">
+                <div className="flex items-center justify-center py-2 px-4 box-border">
                     <div className="relative leading-[120%] lowercase font-medium cursor-pointer">
                         about
                     </div>
