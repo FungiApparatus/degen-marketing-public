@@ -1,163 +1,131 @@
 "use client";
 
-import Image from "next/image";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export default function AboutPage() {
     return (
         <div
-            className="w-full bg-gray-200 min-h-screen overflow-x-hidden text-left text-[20px] text-white font-brisbane flex flex-col items-center">
+            className="w-full bg-gray-200 bg-grid min-h-screen overflow-x-hidden text-left text-[20px] text-white font-brisbane flex flex-col items-center">
             <Header/>
 
-            <div className="relative w-[1728px] h-[2450px] shrink-0">
-                {/* Hero Section */}
-                <div
-                    className="absolute top-[200px] left-[140px] text-[50px] leading-[140%] font-tomboy-lp-bold text-darkorange whitespace-pre-wrap shrink-0">
-                    {`From Tap to Together  `}
-                </div>
-                <div className="absolute top-[270px] left-[140px] text-[36px] leading-[140%] shrink-0">
-                    Degen helps you stay in sync when it matters most.
-                </div>
+            {/* Our Story Section */}
+            <div className="relative w-full max-w-[1728px] mx-auto px-[206px] mt-[130px]">
+                <p className="font-tomboy-lp-bold text-[80px] text-darkorange-200 leading-[1.4] relative z-10">
+                    Our Story
+                </p>
 
-                {/* Feature List Section */}
-                <div className="absolute top-[420px] left-[140px] w-[654px] h-[78px] shrink-0">
-                    <div className="absolute top-[0px] left-[0px] text-num-24 leading-[140%] font-medium">
-                        Event Discovery to Social Connection
-                    </div>
-                    <div className="absolute top-[50px] left-[0px] text-[20px] leading-[140%]">
-                        Quickly and seamlessly tap into popular nearby events and communities.
-                    </div>
-                </div>
-
-                <div className="absolute top-[538px] left-[140px] w-[638px] h-[78px] shrink-0">
-                    <div className="absolute top-[0px] left-[0px] text-num-24 leading-[140%] font-medium">
-                        Redefining Attendance
-                    </div>
-                    <div className="absolute top-[50px] left-[0px] text-[20px] leading-[140%]">
-                        Transform any event into an opportunity for active social engagement.
-                    </div>
-                </div>
-
-                <div className="absolute top-[656px] left-[140px] w-[557px] h-[78px] shrink-0">
-                    <div className="absolute top-[0px] left-[0px] text-num-24 leading-[140%] font-medium">
-                        AI-Powered Curation
-                    </div>
-                    <div className="absolute top-[50px] left-[0px] text-[20px] leading-[140%]">
-                        Personalized recommendations make choosing events simple.
-                    </div>
-                </div>
-
-                <div className="absolute top-[774px] left-[140px] w-[707px] h-[78px] shrink-0">
-                    <div className="absolute top-[0px] left-[0px] text-num-24 leading-[140%] font-medium">
-                        Creator-Led Discovery
-                    </div>
-                    <div className="absolute top-[50px] left-[0px] text-[20px] leading-[140%]">
-                        Trusted communities turn noisy event feeds into a premium, social experience.
-                    </div>
-                </div>
-
-                {/* iPhone Image */}
-                <Image
-                    className="absolute top-[160px] left-[1163px] w-[405px] h-[820px] object-cover shrink-0"
-                    width={405}
-                    height={820}
-                    sizes="100vw"
-                    alt="Degen Interface on iPhone"
-                    src="/About/source/iPhone 16 Pro Max.png"
-                    priority
+                {/* Mila illustration — top right */}
+                <img
+                    src="/About/Mila.svg"
+                    alt=""
+                    className="absolute top-[-40px] right-[230px] w-[320px] h-auto z-0"
+                    draggable={false}
                 />
 
-                {/* Mood Board Section */}
-                <div
-                    className="absolute top-[980px] left-[calc(50%_-_300px)] text-[50px] leading-[140%] font-tomboy-lp-bold text-darkorange whitespace-pre-wrap shrink-0">
-                    What are you in the mood for?
+                {/* Story intro */}
+                <p className="text-[24px] tracking-[-0.24px] leading-normal mt-[40px] w-[646px] relative z-10">
+                    For us at Degen, this isn&apos;t just about building an app.
+                </p>
+
+                {/* Story body with pink highlights */}
+                <p className="text-[32px] tracking-[-0.32px] leading-normal mt-[20px] max-w-full relative z-10">
+                    It&apos;s about shaping a new way people{" "}
+                    <span className="text-[#ff67d4]">step out, connect, </span>
+                    and <span className="text-[#ff67d4]">play </span>
+                    in a city full of possibility.
+                </p>
+
+                {/* Italic question */}
+                <p className="font-bold italic text-[20px] text-aliceblue tracking-[-0.25px] leading-[60px] mt-[60px] relative z-10">
+                    What if discovering and joining experiences could be effortless, social, and genuinely fun?
+                </p>
+
+                {/* Body paragraphs */}
+                <div className="mt-[30px] w-[1051px] max-w-full text-[24px] text-aliceblue tracking-[-0.24px] leading-[32px] relative z-10">
+                    <p className="mb-[32px]">
+                        Degen explores this question through a new age technology that narrows in on what truly matters
+                        in making the magic happen: chance.
+                    </p>
+                    <p>
+                        By intentionally creating space for serendipity, we help people step out of their comfort zones,
+                        discover what&apos;s happening around them, and connect in ways that feel real, effortless, and
+                        alive.
+                    </p>
                 </div>
-                <div className="absolute top-[1000px] left-[calc(50%_-_400px)] w-[800px] flex justify-center py-16">
-                    <Image
-                        className="object-contain"
-                        width={800}
-                        height={400}
-                        sizes="100vw"
-                        alt="Mood Board"
-                        src="/About/mood_board.webp"
+            </div>
+
+            {/* Three Pillars Section */}
+            <div className="relative w-full max-w-[1728px] mx-auto mt-[100px] flex justify-center gap-[40px] px-[50px]">
+                {/* Built for the City */}
+                <div className="flex flex-col items-center">
+                    <img src="/About/Built-for-city-mice.svg" alt="" className="w-[150px] h-auto mb-[-100px] ml-[90px] z-10"/>
+                    <div className="bg-[#ff7a1c] rounded-[300px] w-[384px] h-[363px] flex flex-col items-center justify-center text-center text-white px-[26px]">
+                        <p className="font-brisbane font-bold text-[36px] tracking-[-0.36px] leading-normal">
+                            Built for the City
+                        </p>
+                        <p className="font-brisbane font-medium text-[24px] leading-[29px] mt-[16px] w-[332px]">
+                            We design for real human connection and serendipity, not endless scrolling
+                        </p>
+                    </div>
+                </div>
+
+                {/* Connection over Consumption */}
+                <div className="flex flex-col items-center">
+                    <img src="/About/connection-mice.svg" alt="" className="w-[150px] h-auto mb-[-90px] ml-[-130px] relative z-10"/>
+                    <div className="bg-[#ff7a1c] rounded-[300px] w-[385px] h-[363px] flex flex-col items-center justify-center text-center text-white px-[26px]">
+                        <p className="font-brisbane font-bold text-[36px] tracking-[-0.36px] leading-[42px]">
+                            Connection over<br/>Consumption
+                        </p>
+                        <p className="font-brisbane font-medium text-[24px] leading-[29px] mt-[16px] w-[322px]">
+                            Fast, social, and spontaneous for real places and real experiences
+                        </p>
+                    </div>
+                </div>
+
+                {/* Yes by Design */}
+                <div className="flex flex-col items-center">
+                    <img src="/About/yes-mice.svg" alt="" className="w-[200px] h-auto mb-[-60px] ml-[100px] relative z-10"/>
+                    <div className="bg-[#ff7a1c] rounded-[300px] w-[384px] h-[363px] flex flex-col items-center justify-center text-center text-white px-[26px]">
+                        <p className="font-brisbane font-bold text-[36px] tracking-[-0.36px] leading-normal">
+                            Yes by Design
+                        </p>
+                        <p className="font-brisbane font-medium text-[24px] leading-[29px] mt-[16px] w-[362px]">
+                            Our low friction design makes for fewer excuses to say yes to new connections and experiences
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            {/* Contact Us Section */}
+            <div id="contact" className="w-full max-w-[1728px] mx-auto px-[206px] mt-[120px]">
+                <p className="font-tomboy-lp-bold text-[80px] text-darkorange-200 leading-[1.4]">
+                    Contact Us
+                </p>
+            </div>
+
+            <div className="relative w-full max-w-[1728px] mx-auto mt-[60px] flex justify-center mb-[100px]">
+                <div className="bg-white rounded-[24px] w-[1008px] max-w-full px-[60px] py-[80px] relative overflow-hidden">
+                    <p className="font-brisbane font-bold text-[40px] text-black leading-[1.4] text-center">
+                        For general inquiries:
+                    </p>
+                    <p className="font-brisbane font-bold text-[40px] text-darkorange-200 leading-[1.4] text-center mt-[10px]">
+                        <a href="mailto:info@degenstudiolab.com">info@degenstudiolab.com</a>
+                    </p>
+
+                    <p className="font-brisbane font-bold text-[40px] text-black leading-[1.4] text-center mt-[60px]">
+                        For media and partnerships:
+                    </p>
+                    <p className="font-brisbane font-bold text-[40px] text-darkorange-200 leading-[1.4] text-center mt-[10px]">
+                        <a href="mailto:press@degenstudiolab.com">press@degenstudiolab.com</a>
+                    </p>
+
+                    {/* Contact mice illustration */}
+                    <img
+                        src="/About/contact-mice.svg"
+                        alt=""
+                        className="absolute bottom-[20px] right-[30px] w-[160px] h-auto"
                     />
-                </div>
-
-                {/* Features Cards Section */}
-                <div className="absolute top-[1650px] left-[228px] w-[1272px] h-[191.5px] shrink-0">
-                    <div className="absolute top-[5px] left-[0px] w-[342px] h-[152.5px]">
-                        <div
-                            className="absolute top-[84.5px] left-[13px] text-[24px] leading-[140%] inline-block w-[329px]">
-                            Allowing you to focus on what matters most: being present.
-                        </div>
-                        <Image
-                            className="absolute top-[0px] left-[0px] w-[165.5px] h-[54.5px]"
-                            width={165.5}
-                            height={54.5}
-                            sizes="100vw"
-                            alt="Intuitive icon background"
-                            src="/About/intuitive.svg"
-                        />
-                        <div
-                            className="absolute top-[4.5px] left-[13px] text-[36px] leading-[140%] font-medium text-gray-100">
-                            Intuitive
-                        </div>
-                    </div>
-
-                    <div className="absolute top-[0px] left-[463.5px] w-[343.5px] h-[191.5px]">
-                        <div
-                            className="absolute top-[89.5px] left-[14.5px] text-[24px] leading-[140%] inline-block w-[329px]">
-                            Equipped with the latest in adaptive algorithms and next-gen matching technology.
-                        </div>
-                        <Image
-                            className="absolute top-[0px] left-[0px] w-[198.5px] h-[69.5px]"
-                            width={198.5}
-                            height={69.5}
-                            sizes="100vw"
-                            alt="Optimized icon background"
-                            src="/About/optimized.svg"
-                        />
-                        <div
-                            className="absolute top-[9.5px] left-[14.5px] text-[36px] leading-[140%] font-medium text-gray-100">
-                            Optimized
-                        </div>
-                    </div>
-
-                    <div className="absolute top-[3.5px] left-[924.5px] w-[347.5px] h-[188px]">
-                        <div
-                            className="absolute top-[86px] left-[18.5px] text-[24px] leading-[140%] inline-block w-[329px]">
-                            Built in security features that ensures both you and your data are always protected.
-                        </div>
-                        <Image
-                            className="absolute top-[0px] left-[0px] w-[147px] h-[58px]"
-                            width={147}
-                            height={58}
-                            sizes="100vw"
-                            alt="Secure icon background"
-                            src="/About/secure.svg"
-                        />
-                        <div
-                            className="absolute top-[6px] left-[18.5px] text-[36px] leading-[140%] font-medium text-gray-100">
-                            Secure
-                        </div>
-                    </div>
-                </div>
-
-                {/* Big Text Section */}
-                <div
-                    className="absolute top-[1971.5px] left-[calc(50%_-_704px)] text-[140px] tracking-[0.01em] leading-[110%] font-tomboy-lp-bold text-center shrink-0">
-                    <span className="capitalize">{`Unlock `}</span>
-                    <span className="lowercase">the</span>
-                    <span className="capitalize">{` joy `}</span>
-                    <span className="lowercase">o</span>
-                    <span className="capitalize">{`f `}</span>
-                    <br/>
-                    <span className="capitalize">{`discovery `}</span>
-                    <span className="lowercase">and</span>
-                    <span className="capitalize"> community</span>
-                    <br/>
-                    <span className="capitalize">anywhere!</span>
                 </div>
             </div>
 

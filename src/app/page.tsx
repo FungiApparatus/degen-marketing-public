@@ -1,129 +1,145 @@
 "use client";
 
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import Image from "next/image";
-import SplashScreen from "../components/SplashScreen";
-import {motion, AnimatePresence} from "framer-motion";
+import Link from "next/link";
+import {motion} from "framer-motion";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import {submitEmail} from "@/lib/appwrite";
 
 const SPLASH_DONE_KEY = "splashDone";
 
 export default function Home() {
-  const [showSplash, setShowSplash] = useState(true);
-  const [carouselPhase, setCarouselPhase] = useState<"zoomed" | "zooming-out" | "complete">("zoomed");
+  const [splashPhase, setSplashPhase] = useState<"waiting" | "visible" | "holding" | "animating" | "done">("waiting");
   const [showContent, setShowContent] = useState(false);
-  const [carouselVisible, setCarouselVisible] = useState(false);
+  const signUpRef = useRef<HTMLDivElement>(null);
+  const [formName, setFormName] = useState("");
+  const [formEmail, setFormEmail] = useState("");
+  const [formOptIn, setFormOptIn] = useState(false);
+  const [formStatus, setFormStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
   useEffect(() => {
-    let cancelled = false;
-
-    const t = window.setTimeout(() => {
-      if (cancelled) return;
-
-      let done = false;
-      try {
-        done = window.sessionStorage.getItem(SPLASH_DONE_KEY) === "1";
-      } catch {
-        done = false;
-      }
-
-      if (done) {
-        // Skip splash screen and show content immediately
-        setShowSplash(false);
-        setShowContent(true);
-        setCarouselPhase("complete");
-      } else {
-        setShowSplash(true);
-      }
-    }, 0);
-
-    return () => {
-      cancelled = true;
-      window.clearTimeout(t);
-    };
-  }, []);
-
-  const handleSplashComplete = () => {
+    let done = false;
     try {
-      window.sessionStorage.setItem(SPLASH_DONE_KEY, "1");
+      done = window.sessionStorage.getItem(SPLASH_DONE_KEY) === "1";
     } catch {
-      // ignore
+      done = false;
     }
 
-    // Start fading in carousel immediately while splash is still zooming
-    setCarouselVisible(true);
+    if (done) {
+      setSplashPhase("done");
+      setShowContent(true);
+    } else {
+      setSplashPhase("visible");
+    }
+  }, []);
 
-    // Start carousel zoom-out after fade begins
+  const handleSplashClick = () => {
+    if (splashPhase !== "visible") return;
+
+    try {
+      window.sessionStorage.setItem(SPLASH_DONE_KEY, "1");
+    } catch {}
+
+    // Brief hold then move — feels immediate
+    setSplashPhase("holding");
+
     setTimeout(() => {
-      setCarouselPhase("zooming-out");
-    }, 100);
+      setSplashPhase("animating");
+    }, 400);
 
-    // Hide splash screen after zoom completes (3500ms)
-    setTimeout(() => {
-      setShowSplash(false);
-    }, 3500);
-
-    // Start fading in content just before carousel animation completes
     setTimeout(() => {
       setShowContent(true);
-    }, 3600);
+    }, 1600);
 
-    // Complete carousel animation (remove overlay after content is visible)
     setTimeout(() => {
-      setCarouselPhase("complete");
-    }, 4200);
+      setSplashPhase("done");
+    }, 2400);
   };
 
+  const scrollToSignUp = () => {
+    signUpRef.current?.scrollIntoView({behavior: "smooth"});
+  };
 
-
+  const handleSignUp = async () => {
+    if (!formName.trim() || !formEmail.trim()) return;
+    setFormStatus("submitting");
+    try {
+      await submitEmail({name: formName, email: formEmail, optIn: formOptIn});
+      setFormStatus("success");
+      setFormName("");
+      setFormEmail("");
+      setFormOptIn(false);
+    } catch {
+      setFormStatus("error");
+    }
+  };
 
   return (
-      <div className="relative min-h-screen bg-white">
-        {showSplash && (
-            <SplashScreen
-                onDoneAction={handleSplashComplete}
-                zoomMs={8000}
+      <div className="relative min-h-screen bg-gray-200">
+        {/* Splash Background Overlay — fades out independently */}
+        {splashPhase !== "done" && (
+            <motion.div
+                className="fixed inset-0 z-[9998] bg-gray-200 bg-grid pointer-events-none"
+                animate={{
+                  opacity: splashPhase === "animating" ? 0 : splashPhase === "waiting" ? 0 : 1,
+                }}
+                transition={{
+                  opacity: {
+                    duration: splashPhase === "animating" ? 1.8 : 1,
+                    ease: [0.33, 0, 0.2, 1],
+                  },
+                }}
             />
         )}
 
-        {/* Carousel Zoom Animation Overlay */}
-        {carouselVisible && carouselPhase !== "complete" && (
-            <div className="fixed inset-0 z-[9998] overflow-hidden flex items-center justify-center bg-white">
-              <motion.div
-                  className="w-full"
-                  initial={{scale: 1.5}}
-                  animate={{
-                    scale: carouselPhase === "zooming-out" ? 1 : 2
-                  }}
+        {/* Splash Text — stays fully visible, smears to hero position */}
+        {splashPhase !== "done" && (
+            <motion.div
+                className="fixed inset-0 z-[9999] flex items-center justify-center cursor-pointer"
+                onClick={handleSplashClick}
+                role="button"
+                tabIndex={0}
+                aria-label="Enter site"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") handleSplashClick();
+                }}
+                style={{pointerEvents: splashPhase === "visible" ? "auto" : "none"}}
+                animate={{
+                  opacity: splashPhase === "waiting" ? 0 : 1,
+                }}
+                transition={{
+                  opacity: {duration: 1, ease: [0.33, 0, 0.2, 1]},
+                }}
+            >
+              <motion.img
+                  src="/Splash/full-image.svg"
+                  alt="Powering the Future of Adventure"
+                  className="select-none"
+                  draggable={false}
+                  style={{width: "80vw", maxHeight: "80vh", objectFit: "contain"}}
+                  animate={
+                    splashPhase === "animating"
+                        ? {scale: 0.62, x: "-19.7vw"}
+                        : {scale: 1, x: 0, y: 0}
+                  }
                   transition={{
-                    scale: {
-                      duration: 3.5,
-                      ease: [0.33, 0, 0.2, 1]
-                    }
+                    duration: 1.8,
+                    ease: [0.7, 0, 0.3, 1],
                   }}
-              >
-                <img
-                    className="w-full h-auto"
-                    alt="Carousel"
-                    src="/Carousel/full-image.svg"
-                    style={{
-                      display: 'block',
-                    }}
-                />
-              </motion.div>
-            </div>
+              />
+            </motion.div>
         )}
 
+        {/* Main Content */}
         <motion.div
-            className="w-full relative bg-black flex flex-col items-center text-left text-lg text-white font-brisbane"
+            className="w-full relative bg-gray-200 bg-grid flex flex-col items-center text-left text-lg text-white font-brisbane"
             initial={{opacity: 0}}
             animate={{opacity: showContent ? 1 : 0}}
             transition={{duration: 0.6, ease: "easeInOut"}}
-            style={{
-              pointerEvents: showContent ? "auto" : "none",
-            }}
+            style={{pointerEvents: showContent ? "auto" : "none"}}
             aria-hidden={!showContent}
         >
           {/* Background Dot */}
@@ -132,106 +148,250 @@ export default function Home() {
           {/* Header */}
           <Header/>
 
-          {/* Carousel Section */}
-          <div className="relative w-full bg-white pb-[163px] shrink-0 cursor-[url('/Search.svg'),_auto]">
-            <Image
-                className="w-full h-auto"
-                width={1728}
-                height={790}
-                sizes="100vw"
-                alt="Carousel"
-                src="/Carousel/full-image.svg"
-                priority
+          {/* Hero Section — Splash Text + Carousel side by side */}
+          <div className="relative w-full max-w-[1828px] mx-auto" style={{height: "1200px"}}>
+            {/* Splash Text — left side, overlapping carousel white border only */}
+            <img
+                src="/Splash/full-image.svg"
+                alt="Powering the Future of Adventure"
+                className="absolute top-[220px] left-[100px] w-[577px] h-auto z-10 select-none pointer-events-none"
+                draggable={false}
             />
-        </div>
 
-          {/* Discover Section */}
-          <div className="relative mt-[238px] w-[1625px] max-w-full h-[765px] shrink-0 text-[120px] group">
-            <div className="absolute top-[0px] left-[875px] w-[750px] h-[765px]">
-              {/* Runners */}
-              <Image
-                  className="absolute top-[30px] left-[0px] w-[342px] h-[228px] object-cover transition duration-500 ease-in-out delay-[500ms] group-hover:delay-[0ms] group-hover:scale-110"
-                  width={342} height={228} alt="Runners"
-                  src="/Discover Images/source/23RUNNING-CLUBS-01-zpvw-superJumbo.jpg"
-                  priority
-              />
-              {/* Pottery */}
-              <Image
-                  className="absolute top-[100px] left-[260px] w-[300px] h-[180px] object-cover transition duration-500 ease-in-out delay-[400ms] group-hover:delay-[100ms] group-hover:scale-110"
-                  width={300} height={180} alt="Pottery" src="/Discover Images/source/5I2A2238.png"
-                  priority
-            />
-              {/* Skyline */}
-              <Image
-                  className="absolute top-[180px] left-[450px] w-[300px] h-[200px] object-cover transition duration-500 ease-in-out delay-[300ms] group-hover:delay-[200ms] group-hover:scale-110"
-                  width={300} height={200} alt="Skyline"
-                  src="/Discover Images/source/stephen-mcfadden-1JOsn6qk8w4-unsplash.jpg"
-                  priority
-              />
-              {/* Yoga */}
-              <Image
-                  className="absolute top-[420px] left-[400px] w-[350px] h-[233px] object-cover transition duration-500 ease-in-out delay-[200ms] group-hover:delay-[300ms] group-hover:scale-110"
-                  width={350} height={233} alt="Yoga" src="/Discover Images/source/Outdoor+Yoga.jpg"
-              />
-              {/* Food */}
-              <Image
-                  className="absolute top-[500px] left-[150px] w-[300px] h-[225px] object-cover transition duration-500 ease-in-out delay-[100ms] group-hover:delay-[400ms] group-hover:scale-110"
-                  width={300} height={225} alt="Food" src="/Discover Images/source/elevate-snnhGYNqm44-unsplash.jpg"
-              />
-              {/* Ferris Wheel */}
-              <Image
-                  className="absolute top-[620px] left-[0px] w-[350px] h-[233px] object-cover transition duration-500 ease-in-out delay-[0ms] group-hover:delay-[500ms] group-hover:scale-110"
-                  width={350} height={233} alt="Ferris Wheel" src="/Discover Images/source/1695342809258_1695342812.png"
+            {/* Carousel Card — white rounded, fills right side */}
+            <div className="absolute top-[100px] left-[35%] py-[80px] right-[3%] bg-white rounded-[24px] overflow-hidden mx-auto w-[1200px] max-w-full">
+              <p className="absolute top-[10px] left-1/2 -translate-x-1/2 font-tomboy-lp-bold text-[50px] text-darkorange-200">
+                Explore like a native
+              </p>
+              <img
+                  className="w-full h-auto"
+                  alt="Carousel"
+                  src="/Carousel/full-image.svg"
               />
             </div>
-            <div
-                className="absolute top-[189.19px] left-[calc(50%_-_812.5px)] tracking-[-0.02em] leading-[115%] font-semibold">
-              <div>At Degen, we are building a</div>
-              <div>
-                <span>better way to </span>
-                <span className="text-darkorange-200">discover people</span>
+
+
+          </div>
+
+          {/* Discover Section */}
+          <div className="relative w-[1625px] max-w-full shrink-0 group mt-[-400px]">
+            {/* "Get Degen" heading — clickable, scrolls to sign up */}
+            <button
+                onClick={scrollToSignUp}
+                className="font-tomboy-lp-bold text-[60px] text-white underline underline-offset-[12px] decoration-2 ml-[162px] mt-[40px] mb-[40px] pb-[4px] bg-transparent cursor-pointer leading-[1.4]"
+            >
+              Get Degen
+            </button>
+
+            {/* Photo collage — shifted right so rightmost aligns with video section */}
+            <div className="relative w-full h-[1400px]">
+              {/* Photo 1 — top left */}
+              <div className="absolute top-[0px] left-[510px] w-[319px] h-[315px] overflow-hidden transition duration-500 ease-in-out delay-[500ms] group-hover:delay-[0ms] group-hover:scale-110">
+                <Image
+                    className="object-cover"
+                    fill
+                    alt="Event photo"
+                    src="/Discover Images/event-photo-1.jpg"
+                    sizes="319px"
+                />
               </div>
-              <div>
-                <span className="text-darkorange-200">and places</span>
-                <span> around you.</span>
+
+              {/* Photo 2 — top center */}
+              <div className="absolute top-[92px] left-[850px] w-[311px] h-[309px] overflow-hidden transition duration-500 ease-in-out delay-[400ms] group-hover:delay-[100ms] group-hover:scale-110">
+                <Image
+                    className="object-cover"
+                    fill
+                    alt="Event photo"
+                    src="/Discover Images/event-photo-2.png"
+                    sizes="311px"
+                />
+              </div>
+
+              {/* Photo 3 — top right */}
+              <div className="absolute top-[197px] left-[1180px] w-[338px] h-[333px] overflow-hidden transition duration-500 ease-in-out delay-[300ms] group-hover:delay-[200ms] group-hover:scale-110">
+                <Image
+                    className="object-cover"
+                    fill
+                    alt="Event photo"
+                    src="/Discover Images/event-photo-3.png"
+                    sizes="338px"
+                />
+              </div>
+
+              {/* Big centered text */}
+              <div className="absolute top-[548px] left-0 right-100 text-center z-10">
+                <p className="font-tomboy-lp-bold text-[120px] capitalize leading-[1.1] tracking-[1.2px]">
+                  <span className="text-white">Find what Moves You. </span>
+                </p>
+                <p className="font-tomboy-lp-bold text-[120px] capitalize leading-[1.1] tracking-[1.2px] text-darkorange-200">
+                  We&apos;ll Meet You There.
+                </p>
+              </div>
+
+              {/* Photo 4 — mid right */}
+              <div className="absolute top-[560px] left-[1080px] w-[412px] h-[354px] overflow-hidden transition duration-500 ease-in-out delay-[200ms] group-hover:delay-[300ms] group-hover:scale-110">
+                <Image
+                    className="object-cover"
+                    fill
+                    alt="Event photo"
+                    src="/Discover Images/event-photo-4.png"
+                    sizes="412px"
+                />
+              </div>
+
+              {/* Photo 5 — bottom center */}
+              <div className="absolute top-[920px] left-[900px] w-[378px] h-[344px] overflow-hidden transition duration-500 ease-in-out delay-[100ms] group-hover:delay-[400ms] group-hover:scale-110">
+                <Image
+                    className="object-cover"
+                    fill
+                    alt="Event photo"
+                    src="/Discover Images/event-photo-5.jpg"
+                    sizes="378px"
+                />
+              </div>
+
+              {/* Photo 6 — bottom left */}
+              <div className="absolute top-[1050px] left-[600px] w-[345px] h-[333px] overflow-hidden transition duration-500 ease-in-out delay-[0ms] group-hover:delay-[500ms] group-hover:scale-110">
+                <Image
+                    className="object-cover"
+                    fill
+                    alt="Event photo"
+                    src="/Discover Images/event-photo-6.png"
+                    sizes="345px"
+                />
               </div>
             </div>
           </div>
 
-          {/* Info Sheet / Sign Up Section */}
-          <div className="relative mt-[300px] w-[1148px] max-w-full h-[850px] shrink-0 text-2xl font-satoshi">
-            <div
-                className="absolute top-[776px] left-[calc(50%_-_9px)] rounded-[20px] bg-darkorange-100 w-[200px] flex items-center justify-center py-5 px-2.5 box-border cursor-pointer">
-              <b className="relative leading-[140%]">Sign Up</b>
-            </div>
+          {/* Where Places Meet People Section */}
+          <div className="relative w-full bg-gray-200 py-[80px] mt-[80px]" style={{minHeight: '997px'}}>
+            <div className="max-w-[1728px] mx-auto px-[165px] flex items-start gap-[60px]">
+              {/* Text content — left side */}
+              <div className="flex-1">
+                <p className="font-tomboy-lp-bold text-[70px] text-white leading-[1.4] mb-[40px]">
+                  <span>Where </span>
+                  <span className="text-deepskyblue">Places Meet People</span>
+                </p>
 
+                <p className="font-brisbane font-bold text-[35px] text-white leading-[1.4] mb-[30px]">
+                  From Event Discovery to Social Connection
+                </p>
+
+                <p className="font-brisbane font-bold text-[45px] text-deepskyblue leading-[1.4] mb-[20px]">
+                  Degen helps you stay in sync when it matters most.
+                </p>
+
+                <p className="font-brisbane italic text-[30px] text-white leading-[1.4]">
+                  Quickly and seamlessly tap into popular events and communities near you.
+                </p>
+              </div>
+
+              {/* Video — right side */}
+              <div className="shrink-0 w-[400px]">
+                <video
+                    className="w-full h-auto rounded-[24px]"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                >
+                  <source src="/Iphone_capture.mov" type="video/quicktime"/>
+                </video>
+              </div>
+            </div>
+          </div>
+
+          {/* Mood Board Section */}
+          <div className="relative w-full flex flex-col items-center ">
+            <p className="font-brisbane text-[60px] text-center leading-[1.15] tracking-[-1.2px] ">
+
+            </p>
             <Image
-                className="absolute top-[0px] left-[0px] w-[583.5px] h-[169px]"
+                className="object-contain w-full h-auto"
+                width={2023}
+                height={1528}
+                sizes="100vw"
+                alt="Mood Board"
+                src="/About/mood_board.png"
+            />
+          </div>
+
+          {/* Info Sheet / Sign Up Section */}
+          <div ref={signUpRef} className="relative w-full flex flex-col items-center mt-[200px]  ">
+            <Image
+                className="mb-[40px] mr-[700px]"
                 width={583.5}
                 height={169}
                 sizes="100vw"
                 alt="Coming Soon"
                 src="/Info Sheet/coming-soon.svg"
             />
-          </div>
 
-          {/* Tally Form */}
-          <div className="relative w-full max-w-[1148px] mx-auto mt-[100px] mb-[100px]">
-            <iframe
-                data-tally-src="https://tally.so/embed/A7l0Ez?alignLeft=1&hideTitle=1&transparentBackground=1"
-                loading="lazy"
-                width="100%"
-                height="517"
-                frameBorder="0"
-                marginHeight={0}
-                marginWidth={0}
-                title="Lead generation form"
-            />
+            <div className="relative bg-aliceblue border-3 border-solid border-deepskyblue rounded-[80px] w-[966px] max-w-full px-[60px] py-[50px]" style={{minHeight: '517px'}}>
+              <p className="font-brisbane font-semibold text-[24px] text-gray-100 leading-[1.4] tracking-[-0.24px] mb-[60px]">
+                Be the first—sign up for early access and get a first look when we launch.
+              </p>
+
+              {/* Name input */}
+              <div className="border-b border-solid border-darkslategray-200 flex items-center p-[16px] w-full mb-[20px]">
+                <input
+                    type="text"
+                    placeholder="Name"
+                    value={formName}
+                    onChange={(e) => setFormName(e.target.value)}
+                    className="font-brisbane text-[18px] text-gray-100 bg-transparent outline-none w-full placeholder:text-silver"
+                />
+              </div>
+
+              {/* Email input */}
+              <div className="border-b border-solid border-darkslategray-200 flex items-center p-[16px] w-full mb-[30px]">
+                <input
+                    type="email"
+                    placeholder="Email"
+                    value={formEmail}
+                    onChange={(e) => setFormEmail(e.target.value)}
+                    className="font-brisbane text-[18px] text-gray-100 bg-transparent outline-none w-full placeholder:text-silver"
+                />
+              </div>
+
+              {/* Checkbox */}
+              <div className="flex items-center gap-[16px] mb-[20px] cursor-pointer" onClick={() => setFormOptIn(!formOptIn)}>
+                <div className={`w-[36px] h-[36px] shrink-0 border-2 border-solid border-gray-100 rounded-[10px] flex items-center justify-center ${formOptIn ? "bg-darkorange-100" : "bg-aliceblue"}`}>
+                  {formOptIn && <span className="text-white text-[20px] leading-none">✓</span>}
+                </div>
+                <p className="font-brisbane font-medium text-[20px] text-gray-100 tracking-[-0.2px] select-none">
+                  Yes, I would like to sign up for the latest Degen Updates
+                </p>
+              </div>
+
+              {/* Privacy notice */}
+              <p className="font-brisbane text-[16px] text-gray-300 tracking-[-0.16px] leading-[1.4]">
+                <span>For information about our privacy practices and commitment to protecting your privacy, check out our </span>
+                <Link href="/privacy" className="underline text-gray-300">Privacy Policy</Link>
+                <span>.</span>
+              </p>
+            </div>
+
+            {/* Sign Up button */}
+            <button
+                onClick={handleSignUp}
+                disabled={formStatus === "submitting"}
+                className="mt-[40px] rounded-[20px] bg-darkorange-100 w-[200px] flex items-center justify-center py-5 px-2.5 cursor-pointer border-none disabled:opacity-50"
+            >
+              <b className="font-satoshi text-[24px] text-white leading-[1.4]">
+                {formStatus === "submitting" ? "Sending..." : formStatus === "success" ? "Signed Up!" : "Sign Up"}
+              </b>
+            </button>
+            {formStatus === "error" && (
+                <p className="mt-[12px] font-brisbane text-[16px] text-red-500">
+                  Something went wrong. Please try again.
+                </p>
+            )}
           </div>
 
           {/* Footer */}
           <Footer/>
         </motion.div>
-    </div>
+      </div>
   );
 }

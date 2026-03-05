@@ -13,9 +13,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-    <head>
-        <script src="https://tally.so/widgets/embed.js" async></script>
-    </head>
     <body className="antialiased">
         {children}
       </body>

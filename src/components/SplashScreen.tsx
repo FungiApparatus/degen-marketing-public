@@ -42,7 +42,7 @@ export default function SplashScreen({
 
     return (
         <motion.div
-            className="fixed inset-0 z-[9999] flex cursor-pointer items-center justify-center bg-white"
+            className="fixed inset-0 z-[9999] flex cursor-pointer items-center justify-center bg-gray-200 bg-grid"
             onClick={startZoom}
             role="button"
             tabIndex={0}

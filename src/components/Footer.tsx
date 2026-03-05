@@ -27,13 +27,17 @@ export default function Footer({className}: FooterProps): JSX.Element {
 
     return (
         <div
-            className={`relative mt-[300px] mb-[20px] w-full px-10 box-border h-[200px] shrink-0 text-base ${className || ""}`}>
+            className={`relative  mb-[20px] w-full px-10 box-border h-[200px] shrink-0 text-base ${className || ""}`}>
             <div className="absolute bottom-[0px] left-10 leading-[140%]">
-                © 2025 Studio Degen Labs, LLC. All rights reserved.
+                © 2026 Studio Degen Labs, LLC. All rights reserved.
+            </div>
+            <div className="absolute bottom-[81.9px] right-10 leading-[140%]">
+                <Link href="/about#contact" className="cursor-pointer hover:text-darkorange transition-colors">Contact Us</Link>
             </div>
             <div className="absolute bottom-[0px] right-10 flex gap-[30px] leading-[140%]">
-                <div className="cursor-pointer">Terms of Use</div>
-                <div className="cursor-pointer">Privacy</div>
+                <Link href="/standards" className="cursor-pointer hover:text-darkorange transition-colors">Standards</Link>
+                <Link href="/terms" className="cursor-pointer hover:text-darkorange transition-colors">Terms of Use</Link>
+                <Link href="/privacy" className="cursor-pointer hover:text-darkorange transition-colors">Privacy</Link>
             </div>
 
             <div className="absolute bottom-[81.9px] left-10 w-[143.3px] h-[25.1px]">
