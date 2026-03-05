@@ -15,7 +15,7 @@ export default function AboutPage() {
                     Our Story
                 </p>
 
-                {/* Mila illustration — top right */}
+                {/* Mila illustration */}
                 <img
                     src="/About/Mila.png"
                     alt=""
@@ -28,7 +28,7 @@ export default function AboutPage() {
                     For us at Degen, this isn&apos;t just about building an app.
                 </p>
 
-                {/* Story body with pink highlights */}
+                {/* Story body */}
                 <p className="text-[clamp(22px,1.85vw,32px)] tracking-[-0.32px] leading-normal mt-[20px] max-w-full relative z-10">
                     It&apos;s about shaping a new way people{" "}
                     <span className="text-[#ff67d4]">step out, connect, </span>
@@ -36,12 +36,10 @@ export default function AboutPage() {
                     in a city full of possibility.
                 </p>
 
-                {/* Italic question */}
                 <p className="font-bold italic text-[clamp(18px,1.16vw,20px)] text-aliceblue tracking-[-0.25px] leading-normal md:leading-[60px] mt-[clamp(40px,3.47vw,60px)] relative z-10">
                     What if discovering and joining experiences could be effortless, social, and genuinely fun?
                 </p>
 
-                {/* Body paragraphs */}
                 <div className="mt-[30px] w-full md:w-[1051px] max-w-full text-[clamp(18px,1.39vw,24px)] text-aliceblue tracking-[-0.24px] leading-[clamp(28px,1.85vw,32px)] relative z-10">
                     <p className="mb-[32px]">
                         Degen explores this question through a new age technology that narrows in on what truly matters

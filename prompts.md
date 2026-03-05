@@ -1,2 +1,0 @@
-1. replace the users mouse with the search.svg when hovering over the carousel image. 
-2. there's two splash texts right now, first is from the animation, second in "Hero Section — Splash Text + Carousel side by side". this implementation is not working because the transition is not syncing the placement of the text for all window sizes. I would like it if the positioning of the text in the hero section was dependent on where the animation finishes. this would ensure that the text doesnt move after the animation finishes.

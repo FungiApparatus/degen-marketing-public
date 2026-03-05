@@ -88,7 +88,7 @@ export default function Home() {
 
   return (
       <div className="relative min-h-screen w-full bg-gray-200 bg-grid overflow-x-hidden">
-        {/* Splash Background Overlay — fades out independently */}
+
         {splashPhase !== "done" && (
             <motion.div
                 className="fixed inset-0 z-[9998] bg-gray-200 bg-grid pointer-events-none"
@@ -104,7 +104,7 @@ export default function Home() {
             />
         )}
 
-        {/* Splash Text — stays fully visible, smears to hero position */}
+        {/* Splash Text */}
         {splashPhase !== "done" && (
             <motion.div
                 className="fixed inset-0 z-[9999] flex items-center justify-center cursor-pointer"
@@ -153,12 +153,10 @@ export default function Home() {
             style={{pointerEvents: showContent ? "auto" : "none"}}
             aria-hidden={!showContent}
         >
-          {/* Background Dot */}
 
-          {/* Header */}
           <Header/>
 
-          {/* Hero splash text — positioned to match animation endpoint exactly */}
+          {/* Hero splash text */}
           <div className="hidden md:flex absolute top-0 left-0 right-0 h-screen items-center justify-center pointer-events-none z-10">
             <img
                 src="/Splash/full-image.svg"
@@ -169,15 +167,15 @@ export default function Home() {
             />
           </div>
 
-          {/* Hero Section — Carousel */}
+          {/* Hero Carousel */}
           <div className="relative w-full max-w-[1828px] mx-auto flex flex-col md:block h-auto md:h-[1200px] px-4 md:px-0">
-            {/* Carousel Card — white rounded, fills right side */}
+
             <div className="static md:absolute md:top-[100px] md:left-[35%] py-[clamp(40px,4.63vw,80px)] md:right-[3%] bg-white rounded-[24px] overflow-hidden mx-auto w-full md:w-[1200px] max-w-full mt-[60px] md:mt-0">
               <p className="relative md:absolute top-0 md:top-[10px] left-0 md:left-1/2 md:-translate-x-1/2 text-center font-tomboy-lp-bold text-[clamp(28px,2.89vw,50px)] text-darkorange-200 px-4 md:px-0 mb-4 md:mb-0">
                 Explore like a native
               </p>
               <img
-                  className="w-full h-auto"
+                  className="w-full h-auto "
                   alt="Carousel"
                   src="/Carousel/full-image.png"
                   style={{cursor: "url('/Search.svg') 16 16, pointer"}}
@@ -189,7 +187,7 @@ export default function Home() {
 
           {/* Discover Section */}
           <div className="relative w-full md:w-[1625px] max-w-full shrink-0 group mt-0 md:mt-[-400px]">
-            {/* "Get Degen" heading — clickable, scrolls to sign up */}
+            {/* "Get Degen" heading  */}
             <button
                 onClick={scrollToSignUp}
                 className="font-tomboy-lp-bold text-[clamp(32px,3.47vw,60px)] text-white underline underline-offset-[clamp(8px,0.69vw,12px)] decoration-2 ml-[clamp(20px,9.38vw,162px)] mt-[40px] mb-[clamp(20px,2.31vw,40px)] pb-[4px] bg-transparent cursor-pointer leading-[1.4]"
@@ -197,7 +195,7 @@ export default function Home() {
               Get Degen
             </button>
 
-            {/* Photo collage — grid on mobile, absolute on desktop */}
+            {/* Photo collage  */}
             <div className="grid grid-cols-2 gap-3 px-4 md:p-0 md:block md:relative md:w-full md:h-[1400px]">
               {/* Photo 1 — top left */}
               <div className="relative md:absolute md:top-[0px] md:left-[510px] w-full md:w-[319px] aspect-square md:aspect-auto md:h-[315px] overflow-hidden transition duration-500 ease-in-out delay-[500ms] group-hover:delay-[0ms] group-hover:scale-110">
@@ -403,7 +401,6 @@ export default function Home() {
             )}
           </div>
 
-          {/* Footer */}
           <Footer/>
         </motion.div>
       </div>
