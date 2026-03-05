@@ -156,14 +156,14 @@ export default function Home() {
 
           <Header/>
 
-          {/* Hero splash text */}
-          <div className="hidden md:flex absolute top-0 left-0 right-0 h-screen items-center justify-center pointer-events-none z-10">
+          {/* Hero splash text — in-flow on mobile, absolute overlay on desktop */}
+          <div className="flex items-center justify-center mt-[60px] px-4 md:absolute md:top-0 md:left-0 md:right-0 md:mt-0 md:px-0 md:h-screen pointer-events-none z-10">
             <img
                 src="/Splash/full-image.svg"
                 alt="Powering the Future of Adventure"
-                className="select-none"
+                className="select-none w-[90vw] md:w-[80vw] md:[transform:translateX(-29.7vw)_scale(0.62)]"
                 draggable={false}
-                style={{width: "80vw", maxHeight: "80vh", objectFit: "contain", transform: "translateX(-29.7vw) scale(0.62)"}}
+                style={{maxHeight: "80vh", objectFit: "contain"}}
             />
           </div>
 
