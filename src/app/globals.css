@@ -62,3 +62,22 @@ body {
       );
   }
 }
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #e5e7eb; /* Change this to your desired color */
+}
+::-webkit-scrollbar-thumb {
+  background: #ff6b35; /* Matches your darkorange theme */
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #000000;
+}
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #ff6b35 #1a1a1a; /* thumb color, track color */
+}

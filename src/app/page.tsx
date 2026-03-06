@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {motion} from "framer-motion";
@@ -11,11 +11,46 @@ import {submitEmail} from "@/lib/appwrite";
 
 const SPLASH_DONE_KEY = "splashDone";
 
+function ScrollPhoto({children, className, scrollScale}: {
+  children: React.ReactNode;
+  className: string;
+  scrollScale: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!scrollScale || !ref.current) return;
+    const el = ref.current;
+
+    let rafId: number;
+    const tick = () => {
+      const rect = el.getBoundingClientRect();
+      const center = rect.top + rect.height / 2;
+      const vpCenter = window.innerHeight / 2;
+      const dist = Math.abs(center - vpCenter);
+      const maxDist = window.innerHeight / 2;
+      const t = Math.max(0, 1 - dist / maxDist);
+      el.style.transform = `scale(${1 + t * 0.1})`;
+      rafId = requestAnimationFrame(tick);
+    };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
+  }, [scrollScale]);
+
+  return (
+      <div ref={ref} className={className}>
+        {children}
+      </div>
+  );
+}
+
 export default function Home() {
   const [splashPhase, setSplashPhase] = useState<"waiting" | "visible" | "holding" | "animating" | "done">("waiting");
   const [showContent, setShowContent] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const signUpRef = useRef<HTMLDivElement>(null);
+  const heroTextRef = useRef<HTMLImageElement>(null);
+  const [mobileTarget, setMobileTarget] = useState({scale: 1, x: 0, y: 0});
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formOptIn, setFormOptIn] = useState(false);
@@ -52,7 +87,17 @@ export default function Home() {
       window.sessionStorage.setItem(SPLASH_DONE_KEY, "1");
     } catch {}
 
-    // Brief hold then move — feels immediate
+    // On mobile, measure where the static hero text sits so the animation lands there
+    if (isMobile && heroTextRef.current) {
+      const rect = heroTextRef.current.getBoundingClientRect();
+      const splashWidth = window.innerWidth * 0.8; // 80vw
+      setMobileTarget({
+        scale: rect.width / splashWidth,
+        x: 0,
+        y: (rect.top + rect.height / 2) - window.innerHeight / 2,
+      });
+    }
+
     setSplashPhase("holding");
 
     setTimeout(() => {
@@ -132,7 +177,7 @@ export default function Home() {
                   animate={
                     splashPhase === "animating"
                         ? isMobile
-                            ? {opacity: 0, scale: 1, x: 0}
+                            ? mobileTarget
                             : {scale: 0.62, x: "-29.7vw"}
                         : {scale: 1, x: 0, y: 0}
                   }
@@ -159,6 +204,7 @@ export default function Home() {
           {/* Hero splash text — in-flow on mobile, absolute overlay on desktop */}
           <div className="flex items-center justify-center mt-[60px] px-4 md:absolute md:top-0 md:left-0 md:right-0 md:mt-0 md:px-0 md:h-screen pointer-events-none z-10">
             <img
+                ref={heroTextRef}
                 src="/Splash/full-image.svg"
                 alt="Powering the Future of Adventure"
                 className="select-none w-[90vw] md:w-[80vw] md:[transform:translateX(-29.7vw)_scale(0.62)]"
@@ -195,43 +241,43 @@ export default function Home() {
               Get Degen
             </button>
 
-            {/* Photo collage  */}
-            <div className="grid grid-cols-2 gap-3 px-4 md:p-0 md:block md:relative md:w-full md:h-[1400px]">
-              {/* Photo 1 — top left */}
-              <div className="relative md:absolute md:top-[0px] md:left-[510px] w-full md:w-[319px] aspect-square md:aspect-auto md:h-[315px] overflow-hidden transition duration-500 ease-in-out delay-[500ms] group-hover:delay-[0ms] group-hover:scale-110">
+            {/* Photo collage — staggered on mobile, absolute on desktop */}
+            <div className="flex flex-col gap-4 px-4 md:gap-0 md:p-0 md:block md:relative md:w-full md:h-[1400px]">
+              {/* Photo 1 — S1 left */}
+              <ScrollPhoto scrollScale={isMobile} className="relative w-[50%] md:w-[319px] self-start ml-[3%] md:ml-0 aspect-[4/5] md:aspect-auto md:h-[315px] rounded-[12px] md:rounded-none overflow-hidden md:absolute md:top-[0px] md:left-[510px] md:transition md:duration-500 md:ease-in-out md:delay-[500ms] md:group-hover:delay-[0ms] md:group-hover:scale-110">
                 <Image
                     className="object-cover"
                     fill
                     alt="Event photo"
                     src="/Discover Images/event-photo-1.jpg"
-                    sizes="(max-width: 768px) 50vw, 319px"
+                    sizes="(max-width: 768px) 40vw, 319px"
                 />
-              </div>
+              </ScrollPhoto>
 
-              {/* Photo 2 — top center */}
-              <div className="relative md:absolute md:top-[92px] md:left-[850px] w-full md:w-[311px] aspect-square md:aspect-auto md:h-[309px] overflow-hidden transition duration-500 ease-in-out delay-[400ms] group-hover:delay-[100ms] group-hover:scale-110">
+              {/* Photo 2 — S1 right */}
+              <ScrollPhoto scrollScale={isMobile} className="relative w-[50%] md:w-[311px] self-end mr-[3%] md:mr-0 aspect-[4/5] md:aspect-auto md:h-[309px] rounded-[12px] md:rounded-none overflow-hidden md:absolute md:top-[92px] md:left-[850px] md:transition md:duration-500 md:ease-in-out md:delay-[400ms] md:group-hover:delay-[100ms] md:group-hover:scale-110">
                 <Image
                     className="object-cover"
                     fill
                     alt="Event photo"
                     src="/Discover Images/event-photo-2.png"
-                    sizes="(max-width: 768px) 50vw, 311px"
+                    sizes="(max-width: 768px) 40vw, 311px"
                 />
-              </div>
+              </ScrollPhoto>
 
-              {/* Photo 3 — top right */}
-              <div className="relative md:absolute md:top-[197px] md:left-[1180px] w-full md:w-[338px] aspect-square md:aspect-auto md:h-[333px] overflow-hidden transition duration-500 ease-in-out delay-[300ms] group-hover:delay-[200ms] group-hover:scale-110">
+              {/* Photo 3 — S1 left */}
+              <ScrollPhoto scrollScale={isMobile} className="relative w-[50%] md:w-[338px] self-start ml-[3%] md:ml-0 aspect-[4/5] md:aspect-auto md:h-[333px] rounded-[12px] md:rounded-none overflow-hidden md:absolute md:top-[197px] md:left-[1180px] md:transition md:duration-500 md:ease-in-out md:delay-[300ms] md:group-hover:delay-[200ms] md:group-hover:scale-110">
                 <Image
                     className="object-cover"
                     fill
                     alt="Event photo"
                     src="/Discover Images/event-photo-3.png"
-                    sizes="(max-width: 768px) 50vw, 338px"
+                    sizes="(max-width: 768px) 40vw, 338px"
                 />
-              </div>
+              </ScrollPhoto>
 
               {/* Big centered text */}
-              <div className="col-span-2 md:absolute md:top-[548px] md:left-0 md:right-100 text-center z-10 py-6 md:py-0">
+              <div className="w-full md:absolute md:top-[548px] md:left-0 md:right-100 text-center z-10 py-6 md:py-0">
                 <p className="font-tomboy-lp-bold text-[clamp(36px,6.94vw,120px)] capitalize leading-[1.1] tracking-[1.2px]">
                   <span className="text-white">Find what Moves You. </span>
                 </p>
@@ -240,38 +286,38 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Photo 4 — mid right */}
-              <div className="relative md:absolute md:top-[560px] md:left-[1080px] w-full md:w-[412px] aspect-square md:aspect-auto md:h-[354px] overflow-hidden transition duration-500 ease-in-out delay-[200ms] group-hover:delay-[300ms] group-hover:scale-110">
+              {/* Photo 4 — S2 right */}
+              <ScrollPhoto scrollScale={isMobile} className="relative w-[50%] md:w-[412px] self-end mr-[3%] md:mr-0 aspect-[4/5] md:aspect-auto md:h-[354px] rounded-[12px] md:rounded-none overflow-hidden md:absolute md:top-[560px] md:left-[1080px] md:transition md:duration-500 md:ease-in-out md:delay-[200ms] md:group-hover:delay-[300ms] md:group-hover:scale-110">
                 <Image
                     className="object-cover"
                     fill
                     alt="Event photo"
                     src="/Discover Images/event-photo-4.png"
-                    sizes="(max-width: 768px) 50vw, 412px"
+                    sizes="(max-width: 768px) 40vw, 412px"
                 />
-              </div>
+              </ScrollPhoto>
 
-              {/* Photo 5 — bottom center */}
-              <div className="relative md:absolute md:top-[920px] md:left-[900px] w-full md:w-[378px] aspect-square md:aspect-auto md:h-[344px] overflow-hidden transition duration-500 ease-in-out delay-[100ms] group-hover:delay-[400ms] group-hover:scale-110">
+              {/* Photo 5 — S2 left */}
+              <ScrollPhoto scrollScale={isMobile} className="relative w-[50%] md:w-[378px] self-start ml-[3%] md:ml-0 aspect-[4/5] md:aspect-auto md:h-[344px] rounded-[12px] md:rounded-none overflow-hidden md:absolute md:top-[920px] md:left-[900px] md:transition md:duration-500 md:ease-in-out md:delay-[100ms] md:group-hover:delay-[400ms] md:group-hover:scale-110">
                 <Image
                     className="object-cover"
                     fill
                     alt="Event photo"
                     src="/Discover Images/event-photo-5.jpg"
-                    sizes="(max-width: 768px) 50vw, 378px"
+                    sizes="(max-width: 768px) 40vw, 378px"
                 />
-              </div>
+              </ScrollPhoto>
 
-              {/* Photo 6 — bottom left */}
-              <div className="relative md:absolute md:top-[1050px] md:left-[600px] w-full md:w-[345px] aspect-square md:aspect-auto md:h-[333px] overflow-hidden transition duration-500 ease-in-out delay-[0ms] group-hover:delay-[500ms] group-hover:scale-110">
+              {/* Photo 6 — S2 right */}
+              <ScrollPhoto scrollScale={isMobile} className="relative w-[50%] md:w-[345px] self-end mr-[3%] md:mr-0 aspect-[4/5] md:aspect-auto md:h-[333px] rounded-[12px] md:rounded-none overflow-hidden md:absolute md:top-[1050px] md:left-[600px] md:transition md:duration-500 md:ease-in-out md:delay-[0ms] md:group-hover:delay-[500ms] md:group-hover:scale-110">
                 <Image
                     className="object-cover"
                     fill
                     alt="Event photo"
                     src="/Discover Images/event-photo-6.png"
-                    sizes="(max-width: 768px) 50vw, 345px"
+                    sizes="(max-width: 768px) 40vw, 345px"
                 />
-              </div>
+              </ScrollPhoto>
             </div>
           </div>
 

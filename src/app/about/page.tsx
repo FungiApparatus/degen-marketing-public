@@ -11,11 +11,21 @@ export default function AboutPage() {
 
             {/* Our Story Section */}
             <div className="relative w-full max-w-[1728px] mx-auto px-[clamp(24px,11.92vw,206px)] mt-[clamp(80px,7.52vw,130px)]">
-                <p className="font-tomboy-lp-bold text-[clamp(40px,4.63vw,80px)] text-darkorange-200 leading-[1.4] relative z-10">
-                    Our Story
-                </p>
+                <div className="flex items-center justify-between md:block">
+                    <p className="font-tomboy-lp-bold text-[clamp(40px,4.63vw,80px)] text-darkorange-200 leading-[1.4] relative z-10">
+                        Our Story
+                    </p>
 
-                {/* Mila illustration */}
+                    {/* Mila illustration - mobile position (right side) */}
+                    <img
+                        src="/About/Mila.png"
+                        alt=""
+                        className="w-[120px] h-auto md:hidden"
+                        draggable={false}
+                    />
+                </div>
+
+                {/* Mila illustration - desktop position */}
                 <img
                     src="/About/Mila.png"
                     alt=""
